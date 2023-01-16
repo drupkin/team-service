@@ -6,3 +6,15 @@ server:
 spring:
   application:
     name : team-service
+
+#Kafka Consumer
+kafka:
+  bootstrapAddress: ${KAFKA_BROKER_URL:localhost:9092)
+  topic: UserCreatedMessage
+  schema-registry:
+    url: ${SCHEMA_REGISTRY_URL:http://localhost:8081)
+  group-id:
+    user-created-consumer-group
+  deserializer:
+    key: "org.apache.kafka.common.serialization.StringDeserializer"
+    value: "io.confluent.kafka.serializers.KafkaAvroDeserializer"
