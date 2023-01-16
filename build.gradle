@@ -3,33 +3,45 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id 'org.springframework.boot' version '3.0.1'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'com.github.davidmc24.gradle.plugin.avro' version '1.5.0'
     id 'org.jetbrains.kotlin.jvm' version '1.7.22'
     id 'org.jetbrains.kotlin.plugin.spring' version '1.7.22'
-}
-
-group = 'bg.dr.chillywe'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-}
-
-repositories {
-    mavenCentral()
+    id 'org.jetbrains.kotlin.kapt' version '1.7.22'
 }
 
 dependencies {
+    // Spring
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.kafka:spring-kafka'
+    // Kotlin
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-    implementation 'org.springframework.kafka:spring-kafka'
+    kapt("org.springframework.boot:spring-boot-configuration-processor")
+
+    // Apache avro
+    implementation 'org.apache.avro:avro:1.11.1'
+    implementation 'io.confluent:kafka-avro-serializer:7.3.1'
+    // Kafka
+    implementation("org.springframework.kafka:spring-kafka:3.0.1")
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
+}
+
+sourceCompatibility = '17'
+
+tasks.withType(com.github.davidmc24.gradle.plugin.avro.GenerateAvroJavaTask) {
+    setSource(file("${projectDir}/../../spec/").absolutePath)
+    setOutputDir(file("${projectDir}/build/generated/avro"))
+
+    avro {
+        fieldVisibility.set("PRIVATE")
+        outputCharacterEncoding.set("UTF-8")
+    }
 }
 
 tasks.withType(KotlinCompile) {
