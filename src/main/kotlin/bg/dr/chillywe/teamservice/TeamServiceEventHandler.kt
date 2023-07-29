@@ -13,7 +13,7 @@ class TeamServiceEventHandler {
 
     @KafkaListener(topics = ["\${kafka.topic}"], groupId = "user-created-consumer-group")
     fun listenGroupFoo(userCreatedMessage: ConsumerRecord<String, UserCreatedMessage>, ack: Acknowledgment) {
-        log.info("Message received {}", userCreatedMessage)
+        log.error("rtrdsgdfsgd")
         ack.acknowledge()
     }
 
